@@ -281,7 +281,7 @@ v1::UStatus ZenohUTransport::registerListenerImpl(
 	return registerPublishNotificationListener_(zenoh_key, listener);
 }
 
-void ZenohUTransport::cleanupListener(CallableConn listener) {
+void ZenohUTransport::cleanupListener(const CallableConn& listener) {
 	subscriber_map_.erase(listener);
 }
 

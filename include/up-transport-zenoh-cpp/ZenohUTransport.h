@@ -93,7 +93,7 @@ protected:
 	/// @note The default implementation does nothing.
 	///
 	/// @param listener shared_ptr of the Connection that has been broken.
-	virtual void cleanupListener(CallableConn listener) override;
+	virtual void cleanupListener(const CallableConn& listener) override;
 
 	static std::string toZenohKeyString(
 	    const std::string& default_authority_name, const v1::UUri& source,
