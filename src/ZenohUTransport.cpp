@@ -167,7 +167,9 @@ std::optional<v1::UMessage> ZenohUTransport::sampleToUMessage(
 		return std::nullopt;
 	}
 	auto payload(zenoh::ext::deserialize<std::string>(sample.get_payload()));
-	message.set_payload(payload);
+	if (!payload.empty()) {
+        message.set_payload(payload);
+	}
 
 	return message;
 }
