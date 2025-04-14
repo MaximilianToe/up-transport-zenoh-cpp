@@ -98,8 +98,8 @@ std::string ZenohUTransport::toZenohKeyString(
 	return zenoh_key.str();
 }
 
-std::vector<uint8_t>
-ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
+std::vector<uint8_t> ZenohUTransport::uattributesToAttachment(
+    const v1::UAttributes& attributes) {
 	std::vector<uint8_t> res;
 
 	std::vector<uint8_t> version = {UATTRIBUTE_VERSION};
@@ -120,7 +120,7 @@ v1::UAttributes ZenohUTransport::attachmentToUAttributes(
     const zenoh::Bytes& attachment) {
 	auto attachment_vec = attachment.as_vector();
 
-	if (attachment_vec.size() ==0) {
+	if (attachment_vec.size() == 0) {
 		spdlog::error("attachmentToUAttributes: attachment size = 0");
 		// TODO(unknown) error report, exception?
 	}
@@ -129,7 +129,6 @@ v1::UAttributes ZenohUTransport::attachmentToUAttributes(
 		spdlog::error("attachmentToUAttributes: incorrect version");
 		// TODO(unknown) error report, exception?
 	}
-
 	v1::UAttributes res;
 	if (attachment_vec.size() == 1) {
 		spdlog::error("attachmentToUAttributes: no data");
@@ -186,7 +185,7 @@ std::optional<v1::UMessage> ZenohUTransport::sampleToUMessage(
 		    "sampleToUMessage: empty attachment, cannot read uAttributes");
 		return std::nullopt;
 	}
-	auto payload=sample.get_payload().as_vector();
+	auto payload = sample.get_payload().as_vector();
 
 	if (!payload.empty()) {
 		std::string payload_as_string(payload.begin(), payload.end());
@@ -254,9 +253,10 @@ v1::UStatus ZenohUTransport::registerPublishNotificationListener_(
 v1::UStatus ZenohUTransport::sendPublishNotification_(
     const std::string& zenoh_key, const std::string& payload,
     const v1::UAttributes& attributes) {
-	spdlog::debug("sendPublishNotification_: {}: {}", zenoh_key, payload);
 	auto attachment = uattributesToAttachment(attributes);
 	auto priority = mapZenohPriority(attributes.priority());
+	spdlog::debug("Sending publish notification: {}: {}", zenoh_key, payload);
+
 	try {
 		// -Wpedantic disallows named member initialization until C++20,
 		// so PutOptions needs to be explicitly created and passed with
@@ -264,12 +264,11 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 		zenoh::Session::PutOptions options;
 		options.priority = priority;
 		options.encoding = zenoh::Encoding("app/custom");
-		options.attachment = attachment;//zenoh::ext::serialize(attachment);
+		options.attachment = attachment;  // zenoh::ext::serialize(attachment);
 
 		const std::vector<uint8_t> payload_as_bytes(payload.begin(),
 		                                            payload.end());
-		session_.put(zenoh::KeyExpr(zenoh_key),
-		             payload_as_bytes,
+		session_.put(zenoh::KeyExpr(zenoh_key), payload_as_bytes,
 		             std::move(options));
 		spdlog::debug("sendPublishNotification_: sent successfully.");
 	} catch (const zenoh::ZException& e) {
