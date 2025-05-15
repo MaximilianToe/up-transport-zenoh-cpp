@@ -103,6 +103,8 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 
 	std::vector<uint8_t> version = {UATTRIBUTE_VERSION};
 
+	spdlog::debug("uattributesToAttachement UAttribute version: ", version.at(0));
+
 	std::vector<uint8_t> data(attributes.ByteSizeLong());
 	attributes.SerializeToArray(data.data(), static_cast<int>(data.size()));
 
@@ -122,6 +124,7 @@ v1::UAttributes ZenohUTransport::attachmentToUAttributes(
 	}
 
 	if (attachment_vec[0].second.size() == 1) {
+		spdlog::debug("attachmentToUAttributes UAttribute version: ", attachment_vec[0].second[0]);
 		if (attachment_vec[0].second[0] != UATTRIBUTE_VERSION) {
 			spdlog::error("attachmentToUAttributes: incorrect version");
 			// TODO(unknown) error report, exception?
