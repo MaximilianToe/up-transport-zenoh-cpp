@@ -20,7 +20,7 @@
 
 namespace uprotocol::transport {
 
-constexpr char UATTRIBUTE_VERSION = 2;
+constexpr char UATTRIBUTE_VERSION = 1;
 
 constexpr uint32_t WILDCARD_ENTITY_ID = 0x0000FFFF;
 constexpr uint32_t WILDCARD_ENTITY_VERSION = 0x000000FF;
