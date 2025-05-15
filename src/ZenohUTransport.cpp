@@ -273,6 +273,11 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 		options.encoding = zenoh::Encoding("app/custom");
 		options.attachment = zenoh::ext::serialize(attachment);
 
+		// Log the values of options
+        // spdlog::debug("PutOptions - Priority: {}", options.priority);
+        spdlog::debug("PutOptions - Encoding: {}", options.encoding->as_string());
+        spdlog::debug("PutOptions - Attachment: {}", options.attachment->as_string());
+
 		const std::vector<uint8_t> payload_as_bytes(payload.begin(),
 		                                            payload.end());
 		session_.put(zenoh::KeyExpr(zenoh_key),
