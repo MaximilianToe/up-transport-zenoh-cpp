@@ -291,16 +291,18 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 		options.priority = priority;
 		options.encoding = zenoh::Encoding("app/custom");
 		options.attachment = zenoh::ext::serialize(attachment);
+		auto logging = zenoh::ext::serialize(attachment);
 
+		spdlog::debug("attachement: {}", fmt::join(logging.as_vector(), ", "));
 		// Log the values of options
-        // spdlog::debug("PutOptions - Priority: {}", options.priority);
-        spdlog::debug("PutOptions - Encoding: {}", options.encoding->as_string());
-        spdlog::debug("PutOptions - Attachment: {}", options.attachment->as_string());
+        // // spdlog::debug("PutOptions - Priority: {}", options.priority);
+        // spdlog::debug("PutOptions - Encoding: {}", options.encoding->as_string());
+        // spdlog::debug("PutOptions - Attachment: {}", options.attachment->as_string());
 
 		const std::vector<uint8_t> payload_as_bytes(payload.begin(),
 		                                            payload.end());
-		spdlog::debug("sendPublishNotification_ payload_as_bytes: [{}]", fmt::join(payload_as_bytes, ", "));
-		spdlog::debug("sendPublishNotification_ session_.put ...");
+		// spdlog::debug("sendPublishNotification_ payload_as_bytes: [{}]", fmt::join(payload_as_bytes, ", "));
+		// spdlog::debug("sendPublishNotification_ session_.put ...");
 		session_.put(zenoh::KeyExpr(zenoh_key),
 		             zenoh::ext::serialize(payload_as_bytes),
 		             std::move(options));
