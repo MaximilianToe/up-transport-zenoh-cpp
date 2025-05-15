@@ -111,6 +111,14 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 
 	res.emplace_back("", version);
 	res.emplace_back("", data);
+
+	// Iterating over elements in res and logging them
+	spdlog::debug("uattributesToAttachement res:");
+    for (const auto& pair : res) {
+        spdlog::debug("Key: '{}', Value: size({})", pair.first, pair.second.size());
+        spdlog::debug("Value bytes: [{}]", fmt::join(pair.second, ", "));
+    }
+
 	return res;
 }
 
