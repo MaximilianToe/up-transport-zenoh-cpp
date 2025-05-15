@@ -16,6 +16,7 @@
 #include <up-cpp/datamodel/serializer/Uuid.h>
 #include <up-cpp/datamodel/validator/UUri.h>
 
+#include <cstdint>
 #include <stdexcept>
 
 namespace uprotocol::transport {
@@ -112,12 +113,30 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 	res.emplace_back("", version);
 	res.emplace_back("", data);
 
+	std::vector<uint8_t> logging_data;
+	for (const auto& entry : version){
+		logging_data.push_back(entry);
+	}
+		for (const auto& entry : data){
+		logging_data.push_back(entry);
+	}
+
+	uint8_t* res_ptr = (uint8_t*)reinterpret_cast<uint8_t*>(res.data());
+	for (size_t i = 0; i < 5; ++i) {
+		spdlog::debug("res_ptr[{}]: {}", i, res_ptr[i]);
+	}
+
+	// logging_data.emplace_back(version.begin(), version.end());
+	// logging_data.emplace_back(data.begin(), data.end());
+
+	spdlog::debug("Value bytes: [{}]", fmt::join(logging_data, ", "));
+	
 	// Iterating over elements in res and logging them
-	spdlog::debug("uattributesToAttachement res:");
-    for (const auto& pair : res) {
-        spdlog::debug("Key: '{}', Value: size({})", pair.first, pair.second.size());
-        spdlog::debug("Value bytes: [{}]", fmt::join(pair.second, ", "));
-    }
+	// spdlog::debug("uattributesToAttachement res:");
+    // for (const auto& pair : res) {
+    //     spdlog::debug("Key: '{}', Value: size({})", pair.first, pair.second.size());
+    //     spdlog::debug("Value bytes: [{}]", fmt::join(pair.second, ", "));
+    // }
 
 	return res;
 }
