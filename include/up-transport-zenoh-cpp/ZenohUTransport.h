@@ -99,7 +99,7 @@ protected:
 private:
 	static v1::UStatus uError(v1::UCode code, std::string_view message);
 
-	static std::vector<std::pair<std::string, std::vector<uint8_t>>>
+	static std::vector<uint8_t>
 	uattributesToAttachment(const v1::UAttributes& attributes);
 
 	static v1::UAttributes attachmentToUAttributes(

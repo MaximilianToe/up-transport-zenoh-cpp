@@ -21,7 +21,7 @@
 
 namespace uprotocol::transport {
 
-constexpr char UATTRIBUTE_VERSION = 5;
+constexpr char UATTRIBUTE_VERSION = 1;
 
 constexpr uint32_t WILDCARD_ENTITY_ID = 0x0000FFFF;
 constexpr uint32_t WILDCARD_ENTITY_VERSION = 0x000000FF;
@@ -98,21 +98,19 @@ std::string ZenohUTransport::toZenohKeyString(
 	return zenoh_key.str();
 }
 
-std::vector<std::pair<std::string, std::vector<uint8_t>>>
+std::vector<uint8_t>
 ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
-	std::vector<std::pair<std::string, std::vector<uint8_t>>> res;
+	std::vector<uint8_t> res;
 
 	std::vector<uint8_t> version = {UATTRIBUTE_VERSION};
-
-	spdlog::debug("uattributesToAttachement UAttribute version: {}", static_cast<int>(version[0]));
-
 
 	std::vector<uint8_t> data(attributes.ByteSizeLong());
 	attributes.SerializeToArray(data.data(), static_cast<int>(data.size()));
 
-	res.emplace_back("", version);
-	res.emplace_back("", data);
+	// res.emplace_back("", version);
+	// res.emplace_back("", data);
 
+	
 	std::vector<uint8_t> logging_data;
 	for (const auto& entry : version){
 		logging_data.push_back(entry);
@@ -121,10 +119,10 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 		logging_data.push_back(entry);
 	}
 
-	uint8_t* res_ptr = (uint8_t*)reinterpret_cast<uint8_t*>(res.data());
-	for (size_t i = 0; i < 5; ++i) {
-		spdlog::debug("res_ptr[{}]: {}", i, res_ptr[i]);
-	}
+	// uint8_t* res_ptr = (uint8_t*)reinterpret_cast<uint8_t*>(res.data());
+	// for (size_t i = 0; i < 5; ++i) {
+	// 	spdlog::debug("res_ptr[{}]: {}", i, res_ptr[i]);
+	// }
 
 	// logging_data.emplace_back(version.begin(), version.end());
 	// logging_data.emplace_back(data.begin(), data.end());
@@ -138,7 +136,7 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
     //     spdlog::debug("Value bytes: [{}]", fmt::join(pair.second, ", "));
     // }
 
-	return res;
+	return logging_data;
 }
 
 v1::UAttributes ZenohUTransport::attachmentToUAttributes(
@@ -281,7 +279,7 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
     const v1::UAttributes& attributes) {
 	spdlog::debug("sendPublishNotification_: {}: {}", zenoh_key, payload);
 	auto attachment = uattributesToAttachment(attributes);
-	spdlog::debug("sendPublishNotification_ attachment[0].second[0]: {}", static_cast<int>(attachment[0].second[0]));
+	// spdlog::debug("sendPublishNotification_ attachment[0].second[0]: {}", static_cast<int>(attachment[0].second[0]));
 	auto priority = mapZenohPriority(attributes.priority());
 	try {
 		// -Wpedantic disallows named member initialization until C++20,
