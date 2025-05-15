@@ -103,7 +103,7 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 
 	std::vector<uint8_t> version = {UATTRIBUTE_VERSION};
 
-	spdlog::debug("uattributesToAttachement UAttribute version: ", static_cast<int>(version[0]));
+	spdlog::debug("uattributesToAttachement UAttribute version: ", static_cast<int>(version[0]), "; constexpr UATTRIBUTE_VERSION:", UATTRIBUTE_VERSION);
 
 	std::vector<uint8_t> data(attributes.ByteSizeLong());
 	attributes.SerializeToArray(data.data(), static_cast<int>(data.size()));
