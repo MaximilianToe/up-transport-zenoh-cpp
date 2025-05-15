@@ -262,8 +262,8 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
     const v1::UAttributes& attributes) {
 	spdlog::debug("sendPublishNotification_: {}: {}", zenoh_key, payload);
 	auto attachment = uattributesToAttachment(attributes);
-	auto priority = mapZenohPriority(attributes.priority());
 	spdlog::debug("sendPublishNotification_ attachment[0].second[0]: {}", static_cast<int>(attachment[0].second[0]));
+	auto priority = mapZenohPriority(attributes.priority());
 	try {
 		// -Wpedantic disallows named member initialization until C++20,
 		// so PutOptions needs to be explicitly created and passed with
@@ -280,6 +280,8 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 
 		const std::vector<uint8_t> payload_as_bytes(payload.begin(),
 		                                            payload.end());
+		spdlog::debug("sendPublishNotification_ payload_as_bytes: [{}]", fmt::join(payload_as_bytes, ", "));
+		spdlog::debug("sendPublishNotification_ session_.put ...");
 		session_.put(zenoh::KeyExpr(zenoh_key),
 		             zenoh::ext::serialize(payload_as_bytes),
 		             std::move(options));
