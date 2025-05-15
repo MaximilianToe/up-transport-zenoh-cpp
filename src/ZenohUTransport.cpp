@@ -288,7 +288,7 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 		zenoh::Session::PutOptions options;
 		options.priority = priority;
 		options.encoding = zenoh::Encoding("app/custom");
-		options.attachment = zenoh::ext::serialize(attachment);
+		options.attachment = attachment;//zenoh::ext::serialize(attachment);
 		auto logging = zenoh::ext::serialize(attachment);
 
 		spdlog::debug("attachement: {}", fmt::join(logging.as_vector(), ", "));
