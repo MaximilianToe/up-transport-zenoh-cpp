@@ -112,8 +112,7 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 
 	res.insert(res.end(), version.begin(), version.end());
 	res.insert(res.end(), data.begin(), data.end());
-	spdlog::debug("Value bytes: [{}]", fmt::join(res, ", "));
-	
+
 	return res;
 }
 
