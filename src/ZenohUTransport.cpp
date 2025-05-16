@@ -118,23 +118,26 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 
 v1::UAttributes ZenohUTransport::attachmentToUAttributes(
     const zenoh::Bytes& attachment) {
-	auto attachment_vec = zenoh::ext::deserialize<
-	    std::vector<std::pair<std::string, std::vector<uint8_t>>>>(attachment);
+	auto attachment_vec = attachment.as_vector();
 
-	if (attachment_vec.size() != 2) {
-		spdlog::error("attachmentToUAttributes: attachment size != 2");
+	if (attachment_vec.size() == 0) {
+		spdlog::error("attachmentToUAttributes: attachment size = 0");
 		// TODO(unknown) error report, exception?
 	}
 
-	if (attachment_vec[0].second.size() == 1) {
-		spdlog::debug("attachmentToUAttributes UAttribute version: ", attachment_vec[0].second[0]);
-		if (attachment_vec[0].second[0] != UATTRIBUTE_VERSION) {
+	// if (attachment_vec[0].second.size() == 1) {
+	// 	spdlog::debug("attachmentToUAttributes UAttribute version: ", attachment_vec[0].second[0]);
+		if (attachment_vec[0] != UATTRIBUTE_VERSION) {
 			spdlog::error("attachmentToUAttributes: incorrect version");
 			// TODO(unknown) error report, exception?
 		}
-	};
+	// };
 	v1::UAttributes res;
-	const std::vector<uint8_t> data = attachment_vec[1].second;
+	if (attachment_vec.size() == 1) {
+		spdlog::error("attachmentToUAttributes: no data");
+		return res;
+	}
+	std::vector<uint8_t> data(attachment_vec.begin() + 1, attachment_vec.end());
 	res.ParseFromArray(data.data(), static_cast<int>(data.size()));
 	return res;
 }
@@ -265,7 +268,6 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 		options.priority = priority;
 		options.encoding = zenoh::Encoding("app/custom");
 		options.attachment = attachment;//zenoh::ext::serialize(attachment);
-		auto logging = zenoh::ext::serialize(attachment);
 
 		const std::vector<uint8_t> payload_as_bytes(payload.begin(),
 		                                            payload.end());
