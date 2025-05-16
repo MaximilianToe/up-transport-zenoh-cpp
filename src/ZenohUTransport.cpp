@@ -110,33 +110,11 @@ ZenohUTransport::uattributesToAttachment(const v1::UAttributes& attributes) {
 	// res.emplace_back("", version);
 	// res.emplace_back("", data);
 
+	res.insert(res.end(), version.begin(), version.end());
+	res.insert(res.end(), data.begin(), data.end());
+	spdlog::debug("Value bytes: [{}]", fmt::join(res, ", "));
 	
-	std::vector<uint8_t> logging_data;
-	for (const auto& entry : version){
-		logging_data.push_back(entry);
-	}
-		for (const auto& entry : data){
-		logging_data.push_back(entry);
-	}
-
-	// uint8_t* res_ptr = (uint8_t*)reinterpret_cast<uint8_t*>(res.data());
-	// for (size_t i = 0; i < 5; ++i) {
-	// 	spdlog::debug("res_ptr[{}]: {}", i, res_ptr[i]);
-	// }
-
-	// logging_data.emplace_back(version.begin(), version.end());
-	// logging_data.emplace_back(data.begin(), data.end());
-
-	spdlog::debug("Value bytes: [{}]", fmt::join(logging_data, ", "));
-	
-	// Iterating over elements in res and logging them
-	// spdlog::debug("uattributesToAttachement res:");
-    // for (const auto& pair : res) {
-    //     spdlog::debug("Key: '{}', Value: size({})", pair.first, pair.second.size());
-    //     spdlog::debug("Value bytes: [{}]", fmt::join(pair.second, ", "));
-    // }
-
-	return logging_data;
+	return res;
 }
 
 v1::UAttributes ZenohUTransport::attachmentToUAttributes(
@@ -279,7 +257,6 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
     const v1::UAttributes& attributes) {
 	spdlog::debug("sendPublishNotification_: {}: {}", zenoh_key, payload);
 	auto attachment = uattributesToAttachment(attributes);
-	// spdlog::debug("sendPublishNotification_ attachment[0].second[0]: {}", static_cast<int>(attachment[0].second[0]));
 	auto priority = mapZenohPriority(attributes.priority());
 	try {
 		// -Wpedantic disallows named member initialization until C++20,
@@ -291,16 +268,8 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 		options.attachment = attachment;//zenoh::ext::serialize(attachment);
 		auto logging = zenoh::ext::serialize(attachment);
 
-		spdlog::debug("attachement: {}", fmt::join(logging.as_vector(), ", "));
-		// Log the values of options
-        // // spdlog::debug("PutOptions - Priority: {}", options.priority);
-        // spdlog::debug("PutOptions - Encoding: {}", options.encoding->as_string());
-        // spdlog::debug("PutOptions - Attachment: {}", options.attachment->as_string());
-
 		const std::vector<uint8_t> payload_as_bytes(payload.begin(),
 		                                            payload.end());
-		// spdlog::debug("sendPublishNotification_ payload_as_bytes: [{}]", fmt::join(payload_as_bytes, ", "));
-		// spdlog::debug("sendPublishNotification_ session_.put ...");
 		session_.put(zenoh::KeyExpr(zenoh_key),
 		             zenoh::ext::serialize(payload_as_bytes),
 		             std::move(options));
