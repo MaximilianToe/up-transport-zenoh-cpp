@@ -270,7 +270,7 @@ v1::UStatus ZenohUTransport::sendPublishNotification_(
 		const std::vector<uint8_t> payload_as_bytes(payload.begin(),
 		                                            payload.end());
 		session_.put(zenoh::KeyExpr(zenoh_key),
-		             zenoh::ext::serialize(payload_as_bytes),
+		             payload_as_bytes,
 		             std::move(options));
 		spdlog::debug("sendPublishNotification_: sent successfully.");
 	} catch (const zenoh::ZException& e) {
