@@ -178,6 +178,7 @@ zenoh::Priority ZenohUTransport::mapZenohPriority(v1::UPriority upriority) {
 
 std::optional<v1::UMessage> ZenohUTransport::sampleToUMessage(
     const zenoh::Sample& sample) {
+	spdlog::debug("sampleToUMessage start.");
 	v1::UMessage message;
 	const auto attachment = sample.get_attachment();
 	if (attachment.has_value()) {
@@ -196,6 +197,7 @@ std::optional<v1::UMessage> ZenohUTransport::sampleToUMessage(
 		message.set_payload(std::move(payload_as_string));
 	}
 
+	spdlog::debug("sampleToUMessage end.");
 	return message;
 }
 
@@ -238,6 +240,7 @@ v1::UStatus ZenohUTransport::registerPublishNotificationListener_(
 	// NOTE: listener is captured by copy here so that it does not go out
 	// of scope when this function returns.
 	auto on_sample = [listener](const zenoh::Sample& sample) mutable {
+		spdlog::debug("Start executing listener.");
 		auto maybe_message = sampleToUMessage(sample);
 		if (maybe_message.has_value()) {
 			listener(maybe_message.value());
