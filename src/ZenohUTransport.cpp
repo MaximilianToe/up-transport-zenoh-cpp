@@ -178,7 +178,6 @@ zenoh::Priority ZenohUTransport::mapZenohPriority(v1::UPriority upriority) {
 
 std::optional<v1::UMessage> ZenohUTransport::sampleToUMessage(
     const zenoh::Sample& sample) {
-	spdlog::debug("sampleToUMessage start.");
 	v1::UMessage message;
 	const auto attachment = sample.get_attachment();
 	if (attachment.has_value()) {
@@ -189,18 +188,13 @@ std::optional<v1::UMessage> ZenohUTransport::sampleToUMessage(
 		    "sampleToUMessage: empty attachment, cannot read uAttributes");
 		return std::nullopt;
 	}
-	// auto payload(
-	//     zenoh::ext::deserialize<std::vector<uint8_t>>(sample.get_payload()));
 	auto payload=sample.get_payload().as_vector();
-
-	spdlog::debug("sampleToUMessage got payload as bytevector.");
 
 	if (!payload.empty()) {
 		std::string payload_as_string(payload.begin(), payload.end());
 		message.set_payload(std::move(payload_as_string));
 	}
 
-	spdlog::debug("sampleToUMessage end.");
 	return message;
 }
 
