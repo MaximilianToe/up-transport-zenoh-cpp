@@ -120,18 +120,16 @@ v1::UAttributes ZenohUTransport::attachmentToUAttributes(
     const zenoh::Bytes& attachment) {
 	auto attachment_vec = attachment.as_vector();
 
-	if (attachment_vec.size() == 0) {
+	if (attachment_vec.size() ==0) {
 		spdlog::error("attachmentToUAttributes: attachment size = 0");
 		// TODO(unknown) error report, exception?
 	}
 
-	// if (attachment_vec[0].second.size() == 1) {
-	// 	spdlog::debug("attachmentToUAttributes UAttribute version: ", attachment_vec[0].second[0]);
-		if (attachment_vec[0] != UATTRIBUTE_VERSION) {
-			spdlog::error("attachmentToUAttributes: incorrect version");
-			// TODO(unknown) error report, exception?
-		}
-	// };
+	if (attachment_vec[0] != UATTRIBUTE_VERSION) {
+		spdlog::error("attachmentToUAttributes: incorrect version");
+		// TODO(unknown) error report, exception?
+	}
+
 	v1::UAttributes res;
 	if (attachment_vec.size() == 1) {
 		spdlog::error("attachmentToUAttributes: no data");
@@ -237,7 +235,6 @@ v1::UStatus ZenohUTransport::registerPublishNotificationListener_(
 	// NOTE: listener is captured by copy here so that it does not go out
 	// of scope when this function returns.
 	auto on_sample = [listener](const zenoh::Sample& sample) mutable {
-		spdlog::debug("Start executing listener.");
 		auto maybe_message = sampleToUMessage(sample);
 		if (maybe_message.has_value()) {
 			listener(maybe_message.value());
